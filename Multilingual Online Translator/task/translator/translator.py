@@ -8,6 +8,7 @@ if target_lang == 'en':
     translation_dir = 'french-english'
 else:
     translation_dir = 'english-french'
+target_lang_full = translation_dir[:translation_dir.find('-')]
 
 print('Type the word you want to translate:')
 word = input()
@@ -23,21 +24,30 @@ while True:
 
 soup = BeautifulSoup(r.content, 'html.parser')
 
-print('Translations')
+print(f'{target_lang_full.capitalize()} Translations')
 
 # Translations
 translations = []
 for translation in soup.find_all('a', {'class': 'translation', 'class': 'ltr', 'class': 'dict'}):
     translations.append(translation.get('data-term'))
-print(translations)
+    print(translations[-1])
 
 # Sentences
+print(f'\n{target_lang_full.capitalize()} Examples')
 examples = []
-for example in soup.find_all('div', {'class': 'src', 'class': 'ltr'}):
-    # if not example.text.strip() == '':
-    # print(example.parent.get('class')[0])
+for example in soup.find_all('div', {'class': 'src ltr'}):
     if not example.parent.get('class') is None:
         if example.parent.get('class')[0] == 'example':
-            examples.append(example.text.strip())
-print(examples)
+            examples.append([example.text.strip(), ''])
+
+i = 0
+for example_trg in soup.find_all('div', {'class': 'trg ltr'}):
+    if not example_trg.parent.get('class') is None:
+        if example_trg.parent.get('class')[0] == 'example':
+            examples[i][1] = example_trg.text.strip()
+
+            print(examples[i][0])
+            print(examples[i][1])
+            print()
+            i = i + 1
 

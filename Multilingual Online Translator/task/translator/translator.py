@@ -1,38 +1,50 @@
 import requests
 from bs4 import BeautifulSoup
+import argparse
 
 languages = ['all',
-             'Arabic',
-             'German',
-             'English',
-             'Spanish',
-             'French',
-             'Hebrew',
-             'Japanese',
-             'Dutch',
-             'Polish',
-             'Portuguese',
-             'Romanian',
-             'Russian',
-             'Turkish']
+             'arabic',
+             'german',
+             'english',
+             'spanish',
+             'french',
+             'hebrew',
+             'japanese',
+             'dutch',
+             'polish',
+             'portuguese',
+             'romanian',
+             'russian',
+             'turkish']
 
-print('Hello, welcome to the translator. Translator supports:')
-for i, language in enumerate(languages):
-    if i != 0:
-        print(f'{i}. {language}')
+# Argumenty CLI
+parser = argparse.ArgumentParser(description="Program is used for translations")
+parser.add_argument("source_lang", choices=languages, help="Choose one language of the list")
+parser.add_argument("target_lang", choices=languages, help="Choose one language of the list")
+parser.add_argument("word")
 
-print('Type the number of your language:')
-source_lang = languages[int(input())]
-print('Type the number of a language you want to translate to or "0" to translate to all languages:')
-target_lang_number = int(input())
+args = parser.parse_args()
 
-if target_lang_number == 0:
+# print('Hello, welcome to the translator. Translator supports:')
+# for i, language in enumerate(languages):
+#     if i != 0:
+#         print(f'{i}. {language}')
+
+# print('Type the number of your language:')
+# source_lang = languages[int(input())]
+source_lang = args.source_lang
+# print('Type the number of a language you want to translate to or "0" to translate to all languages:')
+# target_lang_number = int(input())
+target_lang = args.target_lang
+
+if target_lang == 'all':
     target_langs = languages[1:]
 else:
-    target_langs = languages[target_lang_number:target_lang_number + 1]
+    target_langs = [target_lang]
 
-print('Type the word you want to translate:')
-word = input()
+# print('Type the word you want to translate:')
+# word = input()
+word = args.word
 
 # Utworzenie pliku
 with open(f'{word}.txt', 'w', encoding='utf-8') as file:
@@ -75,7 +87,7 @@ with open(f'{word}.txt', 'w', encoding='utf-8') as file:
 
         i = 0
         for example_trg in soup.find_all('div', {'class': 'trg'}):
-           if not example_trg.parent.get('class') is None:
+            if not example_trg.parent.get('class') is None:
                 if example_trg.parent.get('class')[0] == 'example':
                     examples[i][1] = example_trg.text.strip()
 
